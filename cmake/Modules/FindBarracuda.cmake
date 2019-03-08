@@ -1,0 +1,73 @@
+
+# Try to find Barracuda executable and OCCA lib 
+#
+
+unset(BARRACUDA_FOUND CACHE)
+unset(BARRACUDA_EXE CACHE)
+unset(POSTPROCESSING_EXE CACHE)
+unset(OCCA_DIR CACHE)
+
+SET(BARRACUDA_FOUND "NO")
+
+# IF(NOT DEFINED BARRACUDA_DIR)
+	# MESSAGE(FATAL_ERROR "Barracuda Package directory is missing, please define BARRACUDA_DIR")
+# ENDIF
+
+
+IF(BARRACUDA_DIR)
+	SET(BARRACUDA_BIN_DIR ${BARRACUDA_DIR}/bin)
+	IF(WIN32)
+		SET(Barracuda_exe Barracuda.exe)
+		SET(Postprocessing_exe Postprocessing.exe)
+	ELSE()
+		SET(Barracuda_exe Barracuda)
+		SET(Postprocessing_exe Postprocessing)
+	ENDIF()
+	
+	#Find barracuda.exe
+	FIND_FILE(BARRACUDA_EXE NAME ${Barracuda_exe} PATHS ${BARRACUDA_BIN_DIR} NO_DEFAULT_PATH)
+	IF(NOT BARRACUDA_EXE)
+		MESSAGE(WARNING "${Barracuda_exe} is not found")
+		SET(BARRACUDA_FOUND "NO")
+	ELSE()
+		MESSAGE(STATUS "Barracuda is found: ${BARRACUDA_EXE}")
+		SET(BARRACUDA_FOUND "YES")
+	ENDIF()
+	#Find postprocessing.exe
+	FIND_FILE(POSTPROCESSING_EXE NAME ${Postprocessing_exe} PATHS ${BARRACUDA_BIN_DIR} NO_DEFAULT_PATH)
+	IF(NOT POSTPROCESSING_EXE)
+		MESSAGE(WARNING "${Postprocessing_exe} is not found")
+		SET(BARRACUDA_FOUND "NO")
+	ELSE()
+		MESSAGE(STATUS "Postprocessing is found: ${POSTPROCESSING_EXE}")
+		SET(BARRACUDA_FOUND "YES")
+	ENDIF()
+	#Find OCCA Lib
+	FIND_FILE(OCCA_SRC_UVA NAME uva.cpp PATHS ${BARRACUDA_DIR}/shared/occa/src NO_DEFAULT_PATH)
+	FIND_FILE(OCCA_KERNEL_L2 NAME L2Proj.occa PATHS ${BARRACUDA_DIR}/shared/occa_kernels NO_DEFAULT_PATH)
+	IF(OCCA_SRC_UVA AND OCCA_KERNEL_L2)
+		SET(OCCA_DIR ${BARRACUDA_DIR}/shared/occa)
+		MESSAGE(STATUS "OCCA_DIR: ${OCCA_DIR}")
+		SET(BARRACUDA_FOUND "YES")
+		unset(OCCA_SRC_UVA CACHE)
+		unset(OCCA_KERNEL_L2 CACHE)
+	ELSE()
+	    MESSAGE(WARNING "OCCA_DIR is not found")
+		SET(BARRACUDA_FOUND "NO")
+	ENDIF()
+ENDIF()
+
+IF(${BARRACUDA_FOUND} STREQUAL "NO")
+	MESSAGE(FATAL_ERROR
+		"Please set BARRACUDA_DIR to the root location of 
+		Barracuda pacakage containing Barracuda.exe, Postprocessing.exe and OCCA library.\n
+		Not found at BARRACUDA_DIR: ${BARRACUDA_DIR}\n"
+	)
+ENDIF()
+
+SET(BARRACUDA_EXE ${BARRACUDA_EXE} CACHE PATH "BARRACUDA_EXE")
+SET(POSTPROCESSING_EXE ${POSTPROCESSING_EXE} CACHE PATH "POSTPROCESSING_EXE")
+SET(OCCA_DIR ${OCCA_DIR} CACHE PATH "POSTPROCESSING_EXE")
+
+mark_as_advanced( BARRACUDA_FOUND )
+
