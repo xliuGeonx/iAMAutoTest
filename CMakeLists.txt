@@ -49,9 +49,17 @@ SET(USE_iAM_NIGHTBUILD OFF CACHE BOOL "AutoTest is configured for NightBuild")
 SET(USE_iAM_RELEASE OFF CACHE BOOL "Using release version of iAM")
 FIND_PACKAGE(iAM REQUIRED)
 
+# vstest.console.exe
+SET(VSTEST_EXE vstest.console.exe)
 
 # ctest
 SET(CTEST_USE_LAUNCHERS 1)
 INCLUDE(CTest)
+SET(CTEST_ENV_VARS )
+LIST(APPEND CTEST_ENV_VARS "MSV_VERSION=${MSVC_VERSION}")
+
 # add Check tool
 ADD_SUBDIRECTORY(compare_results)
+
+#add UnitTest
+ADD_SUBDIRECTORY(UnitTest)
