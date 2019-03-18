@@ -50,9 +50,10 @@ SET(USE_iAM_RELEASE OFF CACHE BOOL "Using release version of iAM")
 FIND_PACKAGE(iAM REQUIRED)
 
 # vstest.console.exe
-MESSAGE(WARING "VS140COMNTOOLS=$ENV{VS140COMNTOOLS}")
+#MESSAGE(WARING "VS140COMNTOOLS=$ENV{VS140COMNTOOLS}")
 SET(VSTEST_EXE $ENV{VS140COMNTOOLS}/../IDE/CommonExtensions/Microsoft/TestWindow/vstest.console.exe)
-
+#SET(SDKSETUP "$ENV{VS140COMNTOOLS}../../VC/vcvarsall.bat")
+SET(XCOPY C:/Windows/System32/xcopy.exe)
 # ctest
 SET(CTEST_USE_LAUNCHERS 1)
 INCLUDE(CTest)
@@ -64,4 +65,10 @@ LIST(APPEND CTEST_ENV_VARS "OCCA_DIR=${OCCA_DIR}")
 ADD_SUBDIRECTORY(compare_results)
 
 #add UnitTest
-ADD_SUBDIRECTORY(UnitTest)
+SET(RUN_UNITTEST TRUE CACHE BOOL "Run iAM_UnitTest - default: ON")
+IF(RUN_UNITTEST)
+	ADD_SUBDIRECTORY(UnitTest)
+ENDIF()
+
+#add IntegrationTest
+ADD_SUBDIRECTORY(IntegrationTest)
