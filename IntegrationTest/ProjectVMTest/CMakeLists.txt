@@ -13,6 +13,14 @@ SET(TESTNAME iAM_InteTest)
 SET(errorRegex "Test Run Failed")
 # validate testcase ---------------------------------------------------
 
+# Add InteTest Test
+ADD_TEST(NAME ${TESTNAME}
+  COMMAND ${VSTEST_EXE} ${iAM_INTETEST_DLL} /Inisolation /Settings:${RUNSETTINGS_FILE}
+ )
+ 
+SET_TESTS_PROPERTIES(${TESTNAME} PROPERTIES  ENVIRONMENT "${CTEST_ENV_VARS}")
+SET_TESTS_PROPERTIES(${TESTNAME} PROPERTIES  FAIL_REGULAR_EXPRESSION "${errorRegex}")
+
 # Add ProjectVMCretor Test
 ADD_TEST(NAME ${TESTNAME}_ProjectVMCretor
   COMMAND ${VSTEST_EXE} ${iAM_SB_INTETEST_DLL} /TestCaseFilter:TestCategory=ProjectVMCretor /Inisolation /Settings:${RUNSETTINGS_FILE}

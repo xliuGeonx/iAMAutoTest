@@ -53,7 +53,7 @@ FIND_PACKAGE(iAM REQUIRED)
 #MESSAGE(WARING "VS140COMNTOOLS=$ENV{VS140COMNTOOLS}")
 SET(VSTEST_EXE $ENV{VS140COMNTOOLS}/../IDE/CommonExtensions/Microsoft/TestWindow/vstest.console.exe)
 #SET(SDKSETUP "$ENV{VS140COMNTOOLS}../../VC/vcvarsall.bat")
-SET(XCOPY C:/Windows/System32/xcopy.exe)
+#SET(XCOPY C:/Windows/System32/xcopy.exe)
 # ctest
 SET(CTEST_USE_LAUNCHERS 1)
 INCLUDE(CTest)
