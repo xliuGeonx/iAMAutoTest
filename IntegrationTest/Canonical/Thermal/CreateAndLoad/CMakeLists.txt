@@ -22,7 +22,10 @@ SET(TEST_RESULTS_DIR ${CMAKE_CURRENT_BINARY_DIR}/TestResults)
 SET(QUALITY_RESULTS_FILE_CreateMesh ${TEST_RESULTS_DIR}/Barracuda/meshes/Mesh_Collection.xmf)
 SET(QUALITY_RESULTS_FILE_LoadMeshAndRun ${TEST_RESULTS_DIR}/Barracuda/results/0/Temperature_proc0_000032.qa)
 SET(QUALITY_REFERENCE_RESULTS_FILE_LoadMeshAndRun ${TEST_RESULTS_DIR}/Barracuda/reference/Ref.qa)
-
+SET(QUALITY_RESULTS_FILE_LoadMeshAndRun_Postpro ${TEST_RESULTS_DIR}/Barracuda/results/TemperatureOnSkins_After_Heating_00000032.xmf)
+IF(EXISTS QUALITY_REFERENCE_RESULTS_FILE_LoadMeshAndRun)
+  FILE(REMOVE ${QUALITY_REFERENCE_RESULTS_FILE_LoadMeshAndRun})
+ENDIF()
 FILE(COPY ${CMAKE_CURRENT_SOURCE_DIR}/reference DESTINATION ${TEST_RESULTS_DIR}/Barracuda )
 # validate testcase ---------------------------------------------------
 
@@ -62,3 +65,16 @@ SET_TESTS_PROPERTIES(${TESTNAME_LoadMeshAndRun}_Barracuda PROPERTIES  FAIL_REGUL
 ADD_TEST(NAME ${TESTNAME_LoadMeshAndRun}_Barracuda_QA
     COMMAND $<TARGET_FILE:${VALIDATE_EXE}> -v -t 1.e-4 --l2_norm  -f ${QUALITY_RESULTS_FILE_LoadMeshAndRun}  -r ${QUALITY_REFERENCE_RESULTS_FILE_LoadMeshAndRun} WORKING_DIRECTORY  ${TEST_RESULTS_DIR}/Barracuda
    )
+   
+# Add CanonicalThmeralTester_LoadMeshAndRun_Postpro Test
+ADD_TEST(NAME ${TESTNAME_LoadMeshAndRun}_Postpro
+  COMMAND ${POSTPROCESSING_EXE} -i ${TEST_RESULTS_DIR}/Barracuda/LoadMeshAndRun.yml WORKING_DIRECTORY ${TEST_RESULTS_DIR}/Barracuda
+ )
+SET_TESTS_PROPERTIES(${TESTNAME_LoadMeshAndRun}_Postpro PROPERTIES  ENVIRONMENT "${CTEST_ENV_VARS}")
+SET_TESTS_PROPERTIES(${TESTNAME_LoadMeshAndRun}_Postpro PROPERTIES  FAIL_REGULAR_EXPRESSION "${warningRegexBarracuda};${errorRegexBarracuda};${inputnotfound}")
+
+# Add CanonicalThmeralTester_LoadMeshAndRun_Postpro_QA Test
+ADD_TEST(NAME ${TESTNAME_LoadMeshAndRun}_Postpro_QA 
+    COMMAND $<TARGET_FILE:${VALIDATE_EXE}> --filecheck true -f ${QUALITY_RESULTS_FILE_LoadMeshAndRun_Postpro}
+)
+SET_TESTS_PROPERTIES(${TESTNAME_LoadMeshAndRun}_Postpro_QA PROPERTIES DEPENDS ${TESTNAME_LoadMeshAndRun}_Postpro)
